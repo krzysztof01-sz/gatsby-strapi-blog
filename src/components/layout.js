@@ -1,53 +1,68 @@
-/**
- * Layout component that queries for data
- * with Gatsby's useStaticQuery component
- *
- * See: https://www.gatsbyjs.com/docs/use-static-query/
- */
+import React, { useState } from "react";
+import styled, { ThemeProvider } from "styled-components";
+import { graphql } from "gatsby";
+import { GlobalStyle, theme, lightTheme, darkTheme } from "../global/styles";
+import { ThemeContext } from "../contexts/theme";
+import Footer from "./Footer";
+import Header from "./header";
+import ThemeSwitcher from "./ThemeSwitcher";
 
-import React from "react"
-import PropTypes from "prop-types"
-import { useStaticQuery, graphql } from "gatsby"
-
-import Header from "./header"
-import "./layout.css"
+const StyledBackground = styled.main`
+  background-color: ${({ theme }) => theme.colors.foundation};
+`;
 
 const Layout = ({ children }) => {
-  const data = useStaticQuery(graphql`
-    query SiteTitleQuery {
-      site {
-        siteMetadata {
-          title
+  const [colors, setColors] = useState(typeof window !== "undefined" && localStorage.getItem("theme"));
+  const createTheme = () => ({ ...theme, colors: colors === "light" ? lightTheme : darkTheme });
+
+  return (
+    <ThemeContext.Provider value={{ colors, setColors }}>
+      <ThemeProvider theme={createTheme()}>
+        <StyledBackground>
+          <GlobalStyle />
+          <Header />
+          <ThemeSwitcher />
+          {children}
+          <Footer />
+        </StyledBackground>
+      </ThemeProvider>
+    </ThemeContext.Provider>
+  );
+};
+
+// global graphql fragments
+
+export const categories = graphql`
+  fragment CategoriesFragment on StrapiArticlesConnection {
+    edges {
+      node {
+        categories {
+          name
         }
       }
     }
-  `)
+  }
+`;
 
-  return (
-    <>
-      <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
-      <div
-        style={{
-          margin: `0 auto`,
-          maxWidth: 960,
-          padding: `0 1.0875rem 1.45rem`,
-        }}
-      >
-        <main>{children}</main>
-        <footer style={{
-          marginTop: `2rem`
-        }}>
-          © {new Date().getFullYear()}, Built with
-          {` `}
-          <a href="https://www.gatsbyjs.com">Gatsby</a>
-        </footer>
-      </div>
-    </>
-  )
-}
+export const imageFragment = graphql`
+  fragment PhotoFragment on StrapiArticlesConnection {
+    edges {
+      node {
+        image {
+          childImageSharp {
+            fluid(
+              srcSetBreakpoints: [600, 1000, 1366, 1920, 2560]
+              maxWidth: 1000
+              maxHeight: 500
+              quality: 70
+            ) {
+              ...GatsbyImageSharpFluid
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
-Layout.propTypes = {
-  children: PropTypes.node.isRequired,
-}
-
-export default Layout
+export default Layout;

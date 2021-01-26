@@ -1,22 +1,52 @@
-import React from "react"
-import { Link } from "gatsby"
+import React from "react";
+import styled from "styled-components";
+import { FlexCenterMixin, WrapperMixin } from "../global/styledComponents";
+import SelectInput from "../components/indexPage/SelectInput";
+import Layout from "../components/Layout";
+import Heading from "../components/Heading";
+import ArticlesList from "../components/indexPage/ArticlesList";
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+const StyledWrapper = styled.main`
+  ${WrapperMixin}
+`;
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-  </Layout>
-)
+const StyledHeader = styled.section`
+  ${FlexCenterMixin}
+  flex-direction: column;
+  margin: 0 auto 5vh;
+`;
 
-export default IndexPage
+const IndexPage = ({ data }) => {
+  const articles = data.allStrapiArticles.edges;
+
+  return (
+    <Layout>
+      <StyledWrapper>
+        <StyledHeader>
+          <Heading text="The newest articles" margin="6vh 0 2vh" />
+          <SelectInput />
+        </StyledHeader>
+
+        <ArticlesList articles={articles} />
+      </StyledWrapper>
+    </Layout>
+  );
+};
+
+export const query = graphql`
+  {
+    allStrapiArticles(sort: { fields: date, order: ASC }) {
+      edges {
+        node {
+          title
+          date
+          slug
+        }
+      }
+      ...PhotoFragment
+      ...CategoriesFragment
+    }
+  }
+`;
+
+export default IndexPage;

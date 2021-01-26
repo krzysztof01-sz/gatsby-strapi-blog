@@ -1,42 +1,55 @@
-import { Link } from "gatsby"
-import PropTypes from "prop-types"
-import React from "react"
+import { Link } from "gatsby";
+import React, { useState } from "react";
+import styled from "styled-components";
+import { mediaQueries } from "../global/mediaQueries";
+import { headerContent } from "../global/pagesContent";
+import { routes } from "../global/routes";
+import HamburgerIcon from "./HamburgerIcon";
+import Nav from "./Nav";
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      background: `rebeccapurple`,
-      marginBottom: `1.45rem`,
-    }}
-  >
-    <div
-      style={{
-        margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
-      }}
-    >
-      <h1 style={{ margin: 0 }}>
-        <Link
-          to="/"
-          style={{
-            color: `white`,
-            textDecoration: `none`,
-          }}
-        >
-          {siteTitle}
+const { title, slogan } = headerContent;
+
+const StyledHeader = styled.header`
+  background-color: ${({ theme }) => theme.colors.primary};
+  padding: 15px;
+  position: relative;
+`;
+
+const StyledHeaderTitle = styled.p`
+  text-align: left;
+  margin-bottom: 1vh;
+  color: ${({ theme }) => theme.colors.foundation};
+  font-size: ${({ theme }) => theme.font.size.medium};
+  font-weight: ${({ theme }) => theme.font.weight.bold};
+`;
+
+const StyledHeaderSlogan = styled.p`
+  color: ${({ theme }) => theme.colors.foundation};
+  font-size: ${({ theme }) => theme.font.size.smallXL};
+  text-align: left;
+  margin-left: 10vw;
+  ${mediaQueries("desktop")`
+    margin-left: 4vw;
+  `}
+`;
+
+const Header = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <Nav isOpen={isOpen} />
+      <StyledHeader>
+        <Link to={routes.homepage}>
+          <StyledHeaderTitle>{title}</StyledHeaderTitle>
         </Link>
-      </h1>
-    </div>
-  </header>
-)
+        <HamburgerIcon isOpen={isOpen} setIsOpen={setIsOpen} />
+        <Link to={routes.homepage}>
+          <StyledHeaderSlogan>{slogan}</StyledHeaderSlogan>
+        </Link>
+      </StyledHeader>
+    </>
+  );
+};
 
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-}
-
-Header.defaultProps = {
-  siteTitle: ``,
-}
-
-export default Header
+export default Header;
