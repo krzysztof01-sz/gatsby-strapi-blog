@@ -1,3 +1,15 @@
+# Personal blog
+
+I created this page to share to knowledge by writing short articles about web development
+
+## Technology stack
+
+- Gatsby.js
+- Strapi headless CMS
+- Styled-components
+
+**Check the project live: [https://quick-webdev.netlify.app/](https://quick-webdev.netlify.app/)**
+
 <!-- AUTO-GENERATED-CONTENT:START (STARTER) -->
 <p align="center">
   <a href="https://www.gatsbyjs.com">
